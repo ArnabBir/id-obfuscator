@@ -26,14 +26,15 @@
         <developer>
             <id>arnabbir</id>
             <name>Arnab Bir</name>
-            <url>https://github.com/arnabbir</url>
+            <email>arnabbir@gmail.com</email>
+            <url>https://github.com/ArnabBir</url>
         </developer>
     </developers>
 
     <scm>
-        <connection>scm:git:https://github.com/arnabbir/id-obfuscator.git</connection>
-        <developerConnection>scm:git:ssh://github.com/arnabbir/id-obfuscator.git</developerConnection>
-        <url>https://github.com/arnabbir/id-obfuscator</url>
+        <connection>scm:git:https://github.com/ArnabBir/id-obfuscator.git</connection>
+        <developerConnection>scm:git:ssh://github.com/ArnabBir/id-obfuscator.git</developerConnection>
+        <url>https://github.com/ArnabBir/id-obfuscator</url>
     </scm>
 
     <properties>
