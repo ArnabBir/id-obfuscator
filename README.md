@@ -1,20 +1,59 @@
 # id-obfuscator
 
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.arnabbir/id-obfuscator.svg?label=Maven%20Central)](https://search.maven.org/artifact/io.github.arnabbir/id-obfuscator)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 Deterministic, reversible obfuscation for sequential numeric IDs using modular multiplicative inverses.
 
-> This is **not encryption**. It is a fast, one to one permutation over the range `[0, modulus)`.
+> This is **not encryption**.  
+> It is a fast, one-to-one permutation over the range `[0, modulus)`.
 
-## Install (Maven)
+## Official Links
+
+- Maven Central  
+  https://central.sonatype.com/artifact/io.github.arnabbir/id-obfuscator
+
+- Maven Search  
+  https://search.maven.org/artifact/io.github.arnabbir/id-obfuscator
+
+- OSS Index (Security Report)  
+  https://ossindex.sonatype.org/component/pkg:maven/io.github.arnabbir/id-obfuscator@1.0.2
+
+- Source Code  
+  https://github.com/ArnabBir/id-obfuscator
+
+# Why id-obfuscator?
+
+Sequential numeric IDs expose:
+
+- Enumeration attack surfaces
+- Business growth patterns
+- Internal system ordering
+- Predictable object discovery
+
+Instead of switching to UUIDs (16 bytes, slower indexing, verbose URLs),  
+`id-obfuscator` keeps
+
+- 8-byte `long`
+- O(1) transformation
+- Zero dependencies
+- Deterministic reversibility
+- High performance indexing
+- Pure arithmetic (no strings, no crypto)
+
+# Installation
+
+## Maven
 
 ```xml
 <dependency>
   <groupId>io.github.arnabbir</groupId>
   <artifactId>id-obfuscator</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.2</version>
 </dependency>
 ```
 
-## Quick start
+## Quick Start
 
 ```java
 import io.github.arnabbir.IdCodec;
@@ -98,7 +137,19 @@ For release signing (Maven Central), activate the `release` profile.
 ```bash
 mvn -P release verify
 ```
+Artifacts are
+- Signed with GPG
+- Published via Sonatype Central Portal
+- Synced to Maven Central
+
+## Design Principles
+
+- Immutability 
+- Fail-fast validation 
+- Pure arithmetic transformation 
+- O(1) operations 
+- No external runtime dependencies 
+- Enterprise grade test coverage
 
 ## License
-
-MIT
+[MIT](https://opensource.org/licenses/MIT)
