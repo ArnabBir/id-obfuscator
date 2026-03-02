@@ -16,16 +16,6 @@ import io.github.arnabbir.IdCodec;
 import io.github.arnabbir.IdCodecFactory;
 
 class EeaIdCodecTest {
-
-    /**
-     * Helper method to strip version bits from encoded values for test assertions.
-     * Version bits are stored in the highest 4 bits (bits 60-63) by default.
-     */
-    private static long stripVersionBits(long encoded, int versionBits) {
-        long mask = (1L << (64 - versionBits)) - 1;
-        return encoded & mask;
-    }
-
     // ============= Constructor Tests =============
 
     @Test
@@ -188,9 +178,8 @@ class EeaIdCodecTest {
         long encoded = codec.encode(id);
         long strippedEncoded = stripVersionBits(encoded, codec.getVersionBits());
 
-        // Assert - after stripping version bits, should be 0
+        // Assert
         assertEquals(0, strippedEncoded);
-        // Verify version is correctly set in highest bits
         assertEquals(codec.getVersion(), encoded >>> (64 - codec.getVersionBits()));
     }
 
@@ -204,7 +193,7 @@ class EeaIdCodecTest {
         long encoded = codec.encode(id);
         long strippedEncoded = stripVersionBits(encoded, codec.getVersionBits());
 
-        // Assert - after stripping version bits, encoded value should be in modulus range
+        // Assert
         assertTrue(strippedEncoded >= 0);
         assertTrue(strippedEncoded < 7);
     }
@@ -780,5 +769,10 @@ class EeaIdCodecTest {
             // Assert
             assertEquals(i, decoded, "Round-trip failed at i=" + i);
         }
+    }
+
+    private static long stripVersionBits(long encoded, int versionBits) {
+        long mask = (1L << (64 - versionBits)) - 1;
+        return encoded & mask;
     }
 }

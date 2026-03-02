@@ -101,14 +101,11 @@ public final class EeaIdCodec implements IdCodec, Serializable {
 
     @Override
     public long encode(long id) {
-        long encoded = modularMultiply(Math.floorMod(id, modulus), multiplier, modulus);
-        // Encode version in the highest bits
-        return encodeVersion(encoded, version);
+        return encodeVersion(modularMultiply(Math.floorMod(id, modulus), multiplier, modulus), version);
     }
 
     @Override
     public long decode(long id) {
-        // Extract and verify version from the highest bits (if version bits are used)
         if (versionBits > 0) {
             int extractedVersion = extractVersion(id);
             if (extractedVersion != version) {
@@ -121,9 +118,6 @@ public final class EeaIdCodec implements IdCodec, Serializable {
         return modularMultiply(Math.floorMod(stripped, modulus), inverseMultiplier, modulus);
     }
 
-    /**
-     * Encodes a value by setting the version in the highest bits.
-     */
     private long encodeVersion(long value, int ver) {
         if (versionBits == 0) {
             return value; // No version bits to encode
@@ -132,9 +126,6 @@ public final class EeaIdCodec implements IdCodec, Serializable {
         return (value & ~versionMask) | ((long) ver << versionShift);
     }
 
-    /**
-     * Extracts the version from the highest bits.
-     */
     private int extractVersion(long value) {
         if (versionBits == 0) {
             return 0; // No version bits
@@ -142,9 +133,6 @@ public final class EeaIdCodec implements IdCodec, Serializable {
         return (int) ((value & versionMask) >>> versionShift);
     }
 
-    /**
-     * Removes the version bits from the highest bits.
-     */
     private long stripVersion(long value) {
         if (versionBits == 0) {
             return value; // No version bits to strip
