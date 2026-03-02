@@ -113,29 +113,27 @@ public final class EeaIdCodec implements IdCodec, Serializable {
                         "version mismatch: expected " + version + ", got " + extractedVersion);
             }
         }
-        // Decode using only the lower bits (without version)
         long stripped = stripVersion(id);
         return modularMultiply(Math.floorMod(stripped, modulus), inverseMultiplier, modulus);
     }
 
     private long encodeVersion(long value, int ver) {
         if (versionBits == 0) {
-            return value; // No version bits to encode
+            return value;
         }
-        // Clear the version bits and set the new version
         return (value & ~versionMask) | ((long) ver << versionShift);
     }
 
     private int extractVersion(long value) {
         if (versionBits == 0) {
-            return 0; // No version bits
+            return 0;
         }
         return (int) ((value & versionMask) >>> versionShift);
     }
 
     private long stripVersion(long value) {
         if (versionBits == 0) {
-            return value; // No version bits to strip
+            return value;
         }
         return value & ~versionMask;
     }
