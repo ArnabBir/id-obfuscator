@@ -16,7 +16,6 @@ import io.github.arnabbir.IdCodec;
 import io.github.arnabbir.IdCodecFactory;
 
 class EeaIdCodecTest {
-
     // ============= Constructor Tests =============
 
     @Test
@@ -177,9 +176,11 @@ class EeaIdCodecTest {
 
         // Act
         long encoded = codec.encode(id);
+        long strippedEncoded = stripVersionBits(encoded, codec.getVersionBits());
 
         // Assert
-        assertEquals(0, encoded);
+        assertEquals(0, strippedEncoded);
+        assertEquals(codec.getVersion(), encoded >>> (64 - codec.getVersionBits()));
     }
 
     @Test
@@ -190,10 +191,11 @@ class EeaIdCodecTest {
 
         // Act
         long encoded = codec.encode(id);
+        long strippedEncoded = stripVersionBits(encoded, codec.getVersionBits());
 
         // Assert
-        assertTrue(encoded >= 0);
-        assertTrue(encoded < 7);
+        assertTrue(strippedEncoded >= 0);
+        assertTrue(strippedEncoded < 7);
     }
 
     @Test
@@ -767,5 +769,10 @@ class EeaIdCodecTest {
             // Assert
             assertEquals(i, decoded, "Round-trip failed at i=" + i);
         }
+    }
+
+    private static long stripVersionBits(long encoded, int versionBits) {
+        long mask = (1L << (64 - versionBits)) - 1;
+        return encoded & mask;
     }
 }

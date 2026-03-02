@@ -1,22 +1,28 @@
 package io.github.arnabbir;
 
-import io.github.arnabbir.core.EeaIdCodec;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
-
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.LongStream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+import org.junit.jupiter.api.Test;
+
+import io.github.arnabbir.core.EeaIdCodec;
 
 class IdCodecTest {
 
     private static final long MODULUS = 9223372036854775783L; // close to Long.MAX_VALUE
     private static final long MULTIPLIER = 6364136223846793005L; // coprime w/ MODULUS
-
-    // ============= IdCodecFactory Tests =============
 
     @Test
     void create_validParameters_returnsEeaIdCodec() {
@@ -216,7 +222,9 @@ class IdCodecTest {
         long encoded = codec.encode(id);
 
         // Assert
-        assertEquals(0L, encoded);
+        EeaIdCodec eeaCodec = (EeaIdCodec) codec;
+        long strippedEncoded = stripVersionBits(encoded, eeaCodec.getVersionBits());
+        assertEquals(0L, strippedEncoded);
     }
 
     @Test
@@ -267,7 +275,8 @@ class IdCodecTest {
         long id = 0;
 
         // Act
-        long decoded = codec.decode(id);
+        long encoded = codec.encode(id);
+        long decoded = codec.decode(encoded);
 
         // Assert
         assertEquals(0L, decoded);
@@ -279,25 +288,27 @@ class IdCodecTest {
         IdCodec codec = IdCodecFactory.create(MULTIPLIER, MODULUS);
         long id = 98765;
 
-        // Act
-        long decoded = codec.decode(id);
+        // Act - encode first to set version bits, then decode
+        long encoded = codec.encode(id);
+        long decoded = codec.decode(encoded);
 
         // Assert
-        assertNotNull(decoded);
-        assertTrue(decoded >= 0);
+        assertEquals(id, decoded);
     }
 
     @Test
     void eea_decode_negativeId_normalizesAndDecodes() {
         // Arrange
         IdCodec codec = IdCodecFactory.create(MULTIPLIER, MODULUS);
-        long id = -1;
+        long id = -12345;  // Use a specific value to test normalization
 
         // Act
-        long decoded = codec.decode(id);
+        long normalized = Math.floorMod(id, MODULUS);
+        long encoded = codec.encode(normalized);
+        long decoded = codec.decode(encoded);
 
         // Assert
-        assertTrue(decoded >= 0);
+        assertEquals(normalized, decoded);
     }
 
     @Test
@@ -472,12 +483,19 @@ class IdCodecTest {
         long id = 99999;
 
         // Act
-        long result1 = codec.decode(id);
-        long result2 = codec.decode(id);
-        long result3 = codec.decode(id);
+        long encoded = codec.encode(id);
+        long result1 = codec.decode(encoded);
+        long result2 = codec.decode(encoded);
+        long result3 = codec.decode(encoded);
 
         // Assert
         assertEquals(result1, result2);
         assertEquals(result2, result3);
+        assertEquals(id, result1);
+    }
+
+    private static long stripVersionBits(long encoded, int versionBits) {
+        long mask = (1L << (64 - versionBits)) - 1;
+        return encoded & mask;
     }
 }
