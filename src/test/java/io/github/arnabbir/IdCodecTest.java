@@ -482,7 +482,7 @@ class IdCodecTest {
         IdCodec codec = IdCodecFactory.create(MULTIPLIER, MODULUS);
         long id = 99999;
 
-        // Act - encode once to get a properly versioned value, decode multiple times
+        // Act
         long encoded = codec.encode(id);
         long result1 = codec.decode(encoded);
         long result2 = codec.decode(encoded);
